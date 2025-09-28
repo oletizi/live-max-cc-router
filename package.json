@@ -6,10 +6,10 @@
     "build": "rollup -c",
     "build:tsc": "tsc",
     "watch": "rollup -c -w",
-    "dev": "concurrently \"rollup -c -w\" \"nodemon --watch dist --ext js --exec echo 'JavaScript updated - reload Max device'\"",
+    "dev": "node scripts/watch-deploy.js",
     "clean": "rimraf dist",
-    "deploy": "npm run build && npm run copy-to-max",
-    "copy-to-max": "node scripts/deploy.js",
+    "deploy": "npm run build && node scripts/deploy.js",
+    "deploy:initial": "node scripts/deploy.js",
     "setup": "node scripts/setup.js"
   },
   "devDependencies": {

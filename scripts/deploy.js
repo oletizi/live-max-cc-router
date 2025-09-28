@@ -5,7 +5,7 @@ const path = require('path');
 const os = require('os');
 
 // Configuration
-const SOURCE_FILE = path.join(__dirname, '..', 'dist', 'max-integration.js');
+const SOURCE_FILE = path.join(__dirname, '..', 'dist', 'cc-router.js');
 const PROJECT_NAME = 'cc-router';
 
 // Platform-specific Max for Live paths
