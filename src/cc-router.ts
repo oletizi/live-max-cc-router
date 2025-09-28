@@ -1,11 +1,11 @@
-/// <reference path="./types.ts" />
-
 /**
  * CC Router for Max for Live - TypeScript Implementation
  * Routes MIDI CC messages to parameters on the currently selected track
  */
 
-class CCRouter {
+import { ParameterMapping, LiveAPIObject, TrackInfo, DeviceInfo } from '@/types';
+
+export class CCRouter {
   private mappings: ParameterMapping[] = [];
   private selectedTrackId: number = -1;
   private liveAPI: LiveAPIObject | null = null;

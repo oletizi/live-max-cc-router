@@ -1,10 +1,10 @@
-/// <reference path="./types.ts" />
-/// <reference path="./cc-router.ts" />
-
 /**
  * Main Max for Live integration file
  * This file provides the Max interface functions and handles the integration
  */
+
+import { CCRouter } from '@/cc-router';
+import { ParameterMapping } from '@/types';
 
 // Max for Live global configuration
 autowatch = 1;
@@ -12,7 +12,7 @@ outlets = 2;
 inlets = 1;
 
 // Global router instance
-ccRouter = new CCRouter();
+const ccRouter = new CCRouter();
 
 /**
  * Called when the Max object loads
@@ -272,3 +272,22 @@ function bang(): void {
 function closebang(): void {
   post("CC Router closed\n");
 }
+
+// Export functions for Max to access after bundling
+export {
+  loadbang,
+  bang,
+  closebang,
+  list,
+  msg_int,
+  msg_float,
+  setmapping,
+  removemapping,
+  debug,
+  testcc,
+  config,
+  trackinfo,
+  setupfor,
+  help,
+  track_observer
+};

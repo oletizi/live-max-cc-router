@@ -3,21 +3,26 @@
   "version": "1.0.0",
   "description": "TypeScript-based CC router for Max for Live with Launch Control XL3",
   "scripts": {
-    "build": "tsc",
-    "watch": "tsc --watch",
-    "dev": "concurrently \"tsc --watch\" \"nodemon --watch dist --ext js --exec echo 'JavaScript updated - reload Max device'\"",
+    "build": "rollup -c",
+    "build:tsc": "tsc",
+    "watch": "rollup -c -w",
+    "dev": "concurrently \"rollup -c -w\" \"nodemon --watch dist --ext js --exec echo 'JavaScript updated - reload Max device'\"",
     "clean": "rimraf dist",
     "deploy": "npm run build && npm run copy-to-max",
     "copy-to-max": "node scripts/deploy.js",
     "setup": "node scripts/setup.js"
   },
   "devDependencies": {
+    "@rollup/plugin-node-resolve": "^16.0.1",
+    "@rollup/plugin-typescript": "^12.1.4",
     "@types/node": "^20.8.0",
-    "typescript": "^5.2.2",
+    "chokidar": "^3.5.3",
     "concurrently": "^8.2.0",
     "nodemon": "^3.0.1",
     "rimraf": "^5.0.0",
-    "chokidar": "^3.5.3"
+    "rollup": "^2.79.2",
+    "rollup-plugin-terser": "^7.0.2",
+    "typescript": "^5.2.2"
   },
   "engines": {
     "node": ">=16.0.0"

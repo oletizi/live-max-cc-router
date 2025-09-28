@@ -1,18 +1,19 @@
 // Max for Live TypeScript definitions
 // These types provide IntelliSense and type safety for Max's JavaScript environment
 
+// Declare Max for Live globals
 declare global {
   // Max global variables
   var outlets: number;
   var inlets: number;
   var autowatch: number;
-  
+
   // Max global functions
   function post(message: string): void;
   function error(message: string): void;
   function arrayfromargs(args: IArguments, start?: number): any[];
   function outlet(outlet: number, ...args: any[]): void;
-  
+
   // Max object constructor
   var LiveAPI: {
     new (path: string): LiveAPIObject;
@@ -20,7 +21,7 @@ declare global {
 }
 
 // LiveAPI object interface
-interface LiveAPIObject {
+export interface LiveAPIObject {
   id: string;
   property: string;
   get(property: string): any;
@@ -29,7 +30,7 @@ interface LiveAPIObject {
 }
 
 // MIDI Message interface
-interface MIDIMessage {
+export interface MIDIMessage {
   ccNumber: number;
   value: number;
   channel: number;
@@ -37,7 +38,7 @@ interface MIDIMessage {
 }
 
 // Parameter mapping configuration
-interface ParameterMapping {
+export interface ParameterMapping {
   ccNumber: number;
   deviceIndex: number;
   parameterIndex: number;
@@ -48,31 +49,22 @@ interface ParameterMapping {
 }
 
 // Track information
-interface TrackInfo {
+export interface TrackInfo {
   id: number;
   name: string;
   deviceCount: number;
 }
 
 // Device information
-interface DeviceInfo {
+export interface DeviceInfo {
   index: number;
   name: string;
   parameterCount: number;
 }
 
 // Configuration object for the CC router
-interface CCRouterConfig {
+export interface CCRouterConfig {
   mappings: ParameterMapping[];
   debugMode: boolean;
   selectedTrackOnly: boolean;
 }
-
-export {
-  MIDIMessage,
-  ParameterMapping,
-  TrackInfo,
-  DeviceInfo,
-  CCRouterConfig,
-  LiveAPIObject
-};
