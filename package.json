@@ -1,0 +1,34 @@
+{
+  "name": "max-cc-router-ts",
+  "version": "1.0.0",
+  "description": "TypeScript-based CC router for Max for Live with Launch Control XL3",
+  "scripts": {
+    "build": "tsc",
+    "watch": "tsc --watch",
+    "dev": "concurrently \"tsc --watch\" \"nodemon --watch dist --ext js --exec echo 'JavaScript updated - reload Max device'\"",
+    "clean": "rimraf dist",
+    "deploy": "npm run build && npm run copy-to-max",
+    "copy-to-max": "node scripts/deploy.js",
+    "setup": "node scripts/setup.js"
+  },
+  "devDependencies": {
+    "@types/node": "^20.8.0",
+    "typescript": "^5.2.2",
+    "concurrently": "^8.2.0",
+    "nodemon": "^3.0.1",
+    "rimraf": "^5.0.0",
+    "chokidar": "^3.5.3"
+  },
+  "engines": {
+    "node": ">=16.0.0"
+  },
+  "keywords": [
+    "max-for-live",
+    "midi",
+    "ableton-live",
+    "launch-control-xl3",
+    "typescript"
+  ],
+  "author": "Your Name",
+  "license": "MIT"
+}
