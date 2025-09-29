@@ -3,6 +3,7 @@
 const fs = require('fs');
 const path = require('path');
 const os = require('os');
+const { createMaxForLiveDevice } = require('./create-amxd');
 
 // Configuration
 const SOURCE_FILE = path.join(__dirname, '..', 'dist', 'cc-router.js');
@@ -54,7 +55,6 @@ function createProjectStructure(targetDir) {
   const dirs = [
     targetDir,
     path.join(targetDir, 'code'),
-    path.join(targetDir, 'patchers'),
     path.join(targetDir, 'docs')
   ];
   
@@ -91,144 +91,13 @@ function deployFiles(targetDir) {
   });
 }
 
-// Create a basic Max patcher
-function createMaxPatcher(targetDir) {
-  const patcherContent = {
-    "patcher": {
-      "fileversion": 1,
-      "appversion": {
-        "major": 8,
-        "minor": 5,
-        "revision": 6,
-        "architecture": "x64",
-        "modernui": 1
-      },
-      "classnamespace": "box",
-      "rect": [59.0, 106.0, 800.0, 600.0],
-      "bglocked": 0,
-      "openinpresentation": 0,
-      "default_fontsize": 12.0,
-      "default_fontface": 0,
-      "default_fontname": "Arial",
-      "gridonopen": 1,
-      "gridsize": [15.0, 15.0],
-      "gridsnaponopen": 1,
-      "objectsnaponopen": 1,
-      "statusbarvisible": 2,
-      "toolbarvisible": 1,
-      "lefttoolbarpinned": 0,
-      "toptoolbarpinned": 0,
-      "righttoolbarpinned": 0,
-      "bottomtoolbarpinned": 0,
-      "toolbars_unpinned_last_save": 0,
-      "tallnewobj": 0,
-      "boxanimatetime": 200,
-      "enablehscroll": 1,
-      "enablevscroll": 1,
-      "devicewidth": 0.0,
-      "description": "",
-      "digest": "",
-      "tags": "",
-      "style": "",
-      "subpatcher_template": "",
-      "assistshowspatchername": 0,
-      "boxes": [
-        {
-          "box": {
-            "id": "obj-1",
-            "maxclass": "comment",
-            "numinlets": 1,
-            "numoutlets": 0,
-            "patching_rect": [50.0, 50.0, 300.0, 20.0],
-            "text": "CC Router for Launch Control XL3 - TypeScript Version"
-          }
-        },
-        {
-          "box": {
-            "id": "obj-2",
-            "maxclass": "newobj",
-            "numinlets": 1,
-            "numoutlets": 2,
-            "outlettype": ["", ""],
-            "patching_rect": [50.0, 100.0, 200.0, 22.0],
-            "saved_object_attributes": {
-              "autowatch": 1,
-              "filename": "cc-router.js",
-              "parameter_enable": 0
-            },
-            "text": "js cc-router.js @autowatch 1"
-          }
-        },
-        {
-          "box": {
-            "id": "obj-3",
-            "maxclass": "comment",
-            "numinlets": 1,
-            "numoutlets": 0,
-            "patching_rect": [50.0, 150.0, 400.0, 20.0],
-            "text": "Send MIDI CC messages to inlet - format: [status, cc, value]"
-          }
-        },
-        {
-          "box": {
-            "id": "obj-4",
-            "maxclass": "message",
-            "numinlets": 2,
-            "numoutlets": 1,
-            "outlettype": [""],
-            "patching_rect": [50.0, 200.0, 100.0, 22.0],
-            "text": "loadbang"
-          }
-        },
-        {
-          "box": {
-            "id": "obj-5",
-            "maxclass": "message",
-            "numinlets": 2,
-            "numoutlets": 1,
-            "outlettype": [""],
-            "patching_rect": [160.0, 200.0, 50.0, 22.0],
-            "text": "help"
-          }
-        },
-        {
-          "box": {
-            "id": "obj-6",
-            "maxclass": "message",
-            "numinlets": 2,
-            "numoutlets": 1,
-            "outlettype": [""],
-            "patching_rect": [220.0, 200.0, 60.0, 22.0],
-            "text": "config"
-          }
-        }
-      ],
-      "lines": [
-        {
-          "patchline": {
-            "destination": ["obj-2", 0],
-            "source": ["obj-4", 0]
-          }
-        },
-        {
-          "patchline": {
-            "destination": ["obj-2", 0],
-            "source": ["obj-5", 0]
-          }
-        },
-        {
-          "patchline": {
-            "destination": ["obj-2", 0],
-            "source": ["obj-6", 0]
-          }
-        }
-      ]
-    }
-  };
+// Create a Max for Live Audio Effect device
+function createMaxDevice(targetDir) {
+  const deviceContent = createMaxForLiveDevice();
   
-  const patcherPath = path.join(targetDir, 'patchers', 'cc-router.maxpat');
-  fs.writeFileSync(patcherPath, JSON.stringify(patcherContent, null, 2));
-  console.log(`✅ Created Max patcher: ${patcherPath}`);
+  const devicePath = path.join(targetDir, 'cc-router.amxd');
+  fs.writeFileSync(devicePath, JSON.stringify(deviceContent, null, 2));
+  console.log(`✅ Created Max for Live device: ${devicePath}`);
 }
 
 // Main deployment function
@@ -260,14 +129,14 @@ function deploy() {
   // Deploy files
   deployFiles(targetDir);
   
-  // Create Max patcher
-  createMaxPatcher(targetDir);
+  // Create Max for Live device
+  createMaxDevice(targetDir);
   
   console.log('\n✅ Deployment complete!');
   console.log('\nNext steps:');
   console.log('1. Open Max for Live');
   console.log(`2. Navigate to: ${targetDir}`);
-  console.log('3. Open cc-router.maxpat');
+  console.log('3. Drag cc-router.amxd to an audio track');
   console.log('4. Save as an Audio Effect in your Live set');
   console.log('5. Send MIDI CC messages to the device');
   
