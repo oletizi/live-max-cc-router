@@ -71,7 +71,7 @@ function deployFiles(targetDir) {
   const deployments = [
     {
       source: SOURCE_FILE,
-      target: path.join(targetDir, 'code', 'cc-router.js'),
+      target: path.join(targetDir, 'cc-router.js'),
       description: 'Main CC Router JavaScript'
     },
     {
@@ -80,7 +80,7 @@ function deployFiles(targetDir) {
       description: 'Documentation'
     }
   ];
-  
+
   deployments.forEach(({ source, target, description }) => {
     if (fs.existsSync(source)) {
       fs.copyFileSync(source, target);

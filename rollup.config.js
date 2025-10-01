@@ -6,30 +6,20 @@ export default {
   input: 'src/max-integration.ts',
   output: {
     file: 'dist/cc-router.js',
-    format: 'iife',
-    name: 'CCRouterMax',
-    // Make functions available globally for Max
-    outro: `
-// Expose functions to Max global scope
-const exportedFunctions = {
-  loadbang, bang, closebang, list, msg_int, msg_float,
-  setmapping, removemapping, debug, testcc, config,
-  trackinfo, setupfor, help, track_observer
-};
-
-// Assign each function to the global scope
-for (const [name, fn] of Object.entries(exportedFunctions)) {
-  if (typeof fn === 'function') {
-    globalThis[name] = fn;
-  }
-}
-    `
+    format: 'es',
+    // No IIFE wrapper - output bare JavaScript for Max
+    // Max's js object needs functions at the top level
   },
+  treeshake: false, // Disable tree-shaking to preserve all code including unused variables
   plugins: [
     resolve(),
     typescript({
       tsconfig: './tsconfig.json',
-      outputToFilesystem: true
+      outputToFilesystem: true,
+      compilerOptions: {
+        target: 'ES5',
+        module: 'ES2015'
+      }
     }),
     // Optional: minification for production builds
     // terser()

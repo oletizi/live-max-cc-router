@@ -7,6 +7,7 @@ declare global {
   var outlets: number;
   var inlets: number;
   var autowatch: number;
+  var messagename: string; // Name of incoming message (for anything() function)
 
   // Max global functions
   function post(message: string): void;

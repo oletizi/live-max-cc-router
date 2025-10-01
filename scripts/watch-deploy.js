@@ -19,13 +19,12 @@ if (!deploymentInfo) {
 }
 
 const { targetDir } = deploymentInfo;
-const targetFile = path.join(targetDir, 'code', 'cc-router.js');
+const targetFile = path.join(targetDir, 'cc-router.js');
 
 // Ensure target directory exists
-const targetCodeDir = path.join(targetDir, 'code');
-if (!fs.existsSync(targetCodeDir)) {
-  fs.mkdirSync(targetCodeDir, { recursive: true });
-  console.log(`Created directory: ${targetCodeDir}`);
+if (!fs.existsSync(targetDir)) {
+  fs.mkdirSync(targetDir, { recursive: true });
+  console.log(`Created directory: ${targetDir}`);
 }
 
 // Copy function with error handling
