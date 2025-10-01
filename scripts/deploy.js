@@ -3,7 +3,7 @@
 const fs = require('fs');
 const path = require('path');
 const os = require('os');
-const { createMaxForLiveDevice } = require('./create-amxd');
+const { createAMXDBinary, createMaxForLiveDevice } = require('./create-amxd-binary');
 
 // Configuration
 const SOURCE_FILE = path.join(__dirname, '..', 'dist', 'cc-router.js');
@@ -94,9 +94,10 @@ function deployFiles(targetDir) {
 // Create a Max for Live Audio Effect device
 function createMaxDevice(targetDir) {
   const deviceContent = createMaxForLiveDevice();
-  
+  const binaryContent = createAMXDBinary(deviceContent);
+
   const devicePath = path.join(targetDir, 'cc-router.amxd');
-  fs.writeFileSync(devicePath, JSON.stringify(deviceContent, null, 2));
+  fs.writeFileSync(devicePath, binaryContent);
   console.log(`✅ Created Max for Live device: ${devicePath}`);
 }
 
