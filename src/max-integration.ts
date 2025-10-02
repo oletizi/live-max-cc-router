@@ -84,8 +84,9 @@ function initializeRouter(): void {
 }
 
 /**
- * Handle incoming MIDI messages
- * Input format: [status, data1, data2]
+ * Handle incoming MIDI CC messages from midiparse
+ * Input format: [status, data1, data2] where midiparse outlet 2 sends controller messages
+ * For CC messages: status=0xB0+channel, data1=ccNumber, data2=value
  */
 function list(): void {
   const args = arrayfromargs(arguments);
@@ -95,28 +96,25 @@ function list(): void {
     return;
   }
 
+  // midiparse outlet 2 sends: [status, ccNumber, value]
   const status = args[0];
-  const data1 = args[1];
-  const data2 = args[2];
+  const ccNumber = args[1];
+  const value = args[2];
 
-  // Check if it's a CC message (0xB0-0xBF)
-  if ((status & 0xF0) === 0xB0) {
-    const channel = status & 0x0F;
-    const ccNumber = data1;
-    const value = data2;
+  // Extract channel from status byte
+  const channel = status & 0x0F;
 
-    // Send status to display
-    outlet(0, "set", "RX: CC" + ccNumber + "=" + value);
+  // Send status to display
+  outlet(0, "set", "RX: CC" + ccNumber + "=" + value);
 
-    // Only route if ccRouter is initialized
-    if (!ccRouter) {
-      post("CC Router: Received MIDI before initialization complete\n");
-      return;
-    }
-
-    // Route through CCRouter
-    ccRouter.handleCCMessage(ccNumber, value, channel);
+  // Only route if ccRouter is initialized
+  if (!ccRouter) {
+    post("CC Router: Received MIDI before initialization complete\n");
+    return;
   }
+
+  // Route through CCRouter
+  ccRouter.handleCCMessage(ccNumber, value, channel);
 }
 
 /*

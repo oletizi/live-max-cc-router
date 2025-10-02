@@ -71,6 +71,100 @@ function createMaxForLiveDevice() {
       "subpatcher_template": "",
       "assistshowspatchername": 0,
       "boxes": [
+        // IO Routing JavaScript
+        {
+          "box": {
+            "id": "obj-iorouting",
+            "maxclass": "newobj",
+            "numinlets": 1,
+            "numoutlets": 2,
+            "outlettype": ["", ""],
+            "patching_rect": [400.0, 60.0, 160.0, 22.0],
+            "saved_object_attributes": {
+              "filename": "ioRouting.js",
+              "parameter_enable": 0
+            },
+            "text": "js ioRouting.js midi_inputs"
+          }
+        },
+        // MIDI Input label
+        {
+          "box": {
+            "id": "obj-midi-label",
+            "maxclass": "comment",
+            "numinlets": 1,
+            "numoutlets": 0,
+            "patching_rect": [400.0, 75.0, 80.0, 20.0],
+            "presentation": 1,
+            "presentation_rect": [165.0, 80.0, 80.0, 15.0],
+            "text": "MIDI Input:",
+            "fontsize": 10.0
+          }
+        },
+        // MIDI Input Type selector
+        {
+          "box": {
+            "id": "obj-midi-type",
+            "maxclass": "live.menu",
+            "numinlets": 1,
+            "numoutlets": 3,
+            "outlettype": ["", "", "float"],
+            "parameter_enable": 1,
+            "patching_rect": [400.0, 90.0, 150.0, 15.0],
+            "presentation": 1,
+            "presentation_rect": [240.0, 80.0, 100.0, 15.0],
+            "saved_attribute_attributes": {
+              "valueof": {
+                "parameter_enum": ["All Ins"],
+                "parameter_initial": [0],
+                "parameter_initial_enable": 0,
+                "parameter_invisible": 0,
+                "parameter_linknames": 1,
+                "parameter_longname": "MIDI Input",
+                "parameter_modmode": 0,
+                "parameter_shortname": "MIDI Input",
+                "parameter_type": 2
+              }
+            },
+            "varname": "MIDI Input Type"
+          }
+        },
+        // Prepend settype for ioRouting
+        {
+          "box": {
+            "id": "obj-prepend-settype",
+            "maxclass": "newobj",
+            "numinlets": 1,
+            "numoutlets": 1,
+            "outlettype": [""],
+            "patching_rect": [400.0, 110.0, 90.0, 22.0],
+            "text": "prepend settype"
+          }
+        },
+        // live.thisdevice for initialization
+        {
+          "box": {
+            "id": "obj-thisdevice2",
+            "maxclass": "newobj",
+            "numinlets": 1,
+            "numoutlets": 2,
+            "outlettype": ["", ""],
+            "patching_rect": [400.0, 10.0, 110.0, 22.0],
+            "text": "live.thisdevice"
+          }
+        },
+        // Init message triggered by live.thisdevice bang
+        {
+          "box": {
+            "id": "obj-init-msg",
+            "maxclass": "message",
+            "numinlets": 2,
+            "numoutlets": 1,
+            "outlettype": [""],
+            "patching_rect": [400.0, 35.0, 29.0, 22.0],
+            "text": "init"
+          }
+        },
         // Title in presentation
         {
           "box": {
@@ -176,52 +270,39 @@ function createMaxForLiveDevice() {
             "text": "v8 cc-router.js @autowatch 1"
           }
         },
-        // MIDI input from Live - using notein for all MIDI
+        // MIDI input - receives routed MIDI
         {
           "box": {
-            "id": "obj-notein",
+            "id": "obj-midiin",
             "maxclass": "newobj",
             "numinlets": 1,
-            "numoutlets": 3,
-            "outlettype": ["int", "int", "int"],
-            "patching_rect": [15.0, 90.0, 60.0, 22.0],
-            "text": "notein"
-          }
-        },
-        // Also get CC messages with ctlin
-        {
-          "box": {
-            "id": "obj-ctlin",
-            "maxclass": "newobj",
-            "numinlets": 1,
-            "numoutlets": 3,
-            "outlettype": ["int", "int", "int"],
-            "patching_rect": [100.0, 90.0, 60.0, 22.0],
-            "text": "ctlin"
-          }
-        },
-        // Format CC as MIDI message [status, data1, data2]
-        {
-          "box": {
-            "id": "obj-cc-format",
-            "maxclass": "newobj",
-            "numinlets": 3,
-            "numoutlets": 1,
-            "outlettype": [""],
-            "patching_rect": [100.0, 120.0, 150.0, 22.0],
-            "text": "pack 176 0 0"
-          }
-        },
-        // Calculate status byte from channel (0xB0 + channel - 1)
-        {
-          "box": {
-            "id": "obj-channel-calc",
-            "maxclass": "newobj",
-            "numinlets": 2,
             "numoutlets": 1,
             "outlettype": ["int"],
-            "patching_rect": [200.0, 120.0, 50.0, 22.0],
-            "text": "+ 175"
+            "patching_rect": [15.0, 60.0, 60.0, 22.0],
+            "text": "midiin"
+          }
+        },
+        // Parse MIDI into controller messages
+        {
+          "box": {
+            "id": "obj-midiparse",
+            "maxclass": "newobj",
+            "numinlets": 1,
+            "numoutlets": 7,
+            "outlettype": ["", "", "", "int", "int", "int", "int"],
+            "patching_rect": [15.0, 90.0, 100.0, 22.0],
+            "text": "midiparse"
+          }
+        },
+        // MIDI output - pass MIDI to next device
+        {
+          "box": {
+            "id": "obj-midiout",
+            "maxclass": "newobj",
+            "numinlets": 1,
+            "numoutlets": 0,
+            "patching_rect": [150.0, 120.0, 55.0, 22.0],
+            "text": "midiout"
           }
         },
         // Debug message for MIDI input
@@ -307,17 +388,6 @@ function createMaxForLiveDevice() {
             "text": "in~ 2"
           }
         },
-        // MIDI output to pass CC through
-        {
-          "box": {
-            "id": "obj-ctlout",
-            "maxclass": "newobj",
-            "numinlets": 3,
-            "numoutlets": 0,
-            "patching_rect": [100.0, 200.0, 60.0, 22.0],
-            "text": "ctlout"
-          }
-        },
         // Audio outputs for pass-through
         {
           "box": {
@@ -341,46 +411,81 @@ function createMaxForLiveDevice() {
         }
       ],
       "lines": [
-        // ctlin CC value (outlet 0) to pack inlet 2
+        // thisdevice2 bang to init message
         {
           "patchline": {
-            "destination": ["obj-cc-format", 2],
-            "source": ["obj-ctlin", 0]
+            "destination": ["obj-init-msg", 0],
+            "source": ["obj-thisdevice2", 0]
           }
         },
-        // ctlin CC number (outlet 1) to pack inlet 1
+        // init message to ioRouting
         {
           "patchline": {
-            "destination": ["obj-cc-format", 1],
-            "source": ["obj-ctlin", 1]
+            "destination": ["obj-iorouting", 0],
+            "source": ["obj-init-msg", 0]
           }
         },
-        // ctlin channel (outlet 2) to channel calculator
+        // ioRouting outlet 0 to MIDI type menu (populates menu options)
         {
           "patchline": {
-            "destination": ["obj-channel-calc", 0],
-            "source": ["obj-ctlin", 2]
+            "destination": ["obj-midi-type", 0],
+            "source": ["obj-iorouting", 0]
           }
         },
-        // Channel calculator to pack inlet 0 (status byte)
+        // MIDI type menu to prepend settype
         {
           "patchline": {
-            "destination": ["obj-cc-format", 0],
-            "source": ["obj-channel-calc", 0]
+            "destination": ["obj-prepend-settype", 0],
+            "source": ["obj-midi-type", 0]
           }
         },
-        // Pack to JS for processing
+        // prepend settype to ioRouting (formatted message)
+        {
+          "patchline": {
+            "destination": ["obj-iorouting", 0],
+            "source": ["obj-prepend-settype", 0]
+          }
+        },
+        // midiin to midiparse
+        {
+          "patchline": {
+            "destination": ["obj-midiparse", 0],
+            "source": ["obj-midiin", 0]
+          }
+        },
+        // midiin to midiout (pass through)
+        {
+          "patchline": {
+            "destination": ["obj-midiout", 0],
+            "source": ["obj-midiin", 0]
+          }
+        },
+        // midiparse controller output (outlet 2) to JS
         {
           "patchline": {
             "destination": ["obj-js", 0],
-            "source": ["obj-cc-format", 0]
+            "source": ["obj-midiparse", 2]
           }
         },
-        // Pack to debug message
+        // midiparse controller to debug message
         {
           "patchline": {
             "destination": ["obj-debug-midi", 0],
-            "source": ["obj-cc-format", 0]
+            "source": ["obj-midiparse", 2]
+          }
+        },
+        // midiparse controller to LED (turn on)
+        {
+          "patchline": {
+            "destination": ["obj-status-led", 0],
+            "source": ["obj-midiparse", 2]
+          }
+        },
+        // midiparse controller to LED blink delay
+        {
+          "patchline": {
+            "destination": ["obj-led-blink", 0],
+            "source": ["obj-midiparse", 2]
           }
         },
         // Debug message to format
@@ -395,20 +500,6 @@ function createMaxForLiveDevice() {
           "patchline": {
             "destination": ["obj-debug-display", 0],
             "source": ["obj-debug-format", 0]
-          }
-        },
-        // MIDI to LED (turn on)
-        {
-          "patchline": {
-            "destination": ["obj-status-led", 0],
-            "source": ["obj-cc-format", 0]
-          }
-        },
-        // MIDI to LED blink delay
-        {
-          "patchline": {
-            "destination": ["obj-led-blink", 0],
-            "source": ["obj-cc-format", 0]
           }
         },
         // LED blink turns off LED
@@ -453,27 +544,6 @@ function createMaxForLiveDevice() {
             "source": ["obj-js", 1]
           }
         },
-        // Pass MIDI CC through - value to ctlout
-        {
-          "patchline": {
-            "destination": ["obj-ctlout", 0],
-            "source": ["obj-ctlin", 0]
-          }
-        },
-        // Pass MIDI CC through - cc number to ctlout
-        {
-          "patchline": {
-            "destination": ["obj-ctlout", 1],
-            "source": ["obj-ctlin", 1]
-          }
-        },
-        // Pass MIDI CC through - channel to ctlout
-        {
-          "patchline": {
-            "destination": ["obj-ctlout", 2],
-            "source": ["obj-ctlin", 2]
-          }
-        },
         // Audio pass-through
         {
           "patchline": {
@@ -492,6 +562,13 @@ function createMaxForLiveDevice() {
       "dependency_cache": [
         {
           "name": "cc-router.js",
+          "bootpath": ".",
+          "patcherrelativepath": ".",
+          "type": "TEXT",
+          "implicit": 1
+        },
+        {
+          "name": "ioRouting.js",
           "bootpath": ".",
           "patcherrelativepath": ".",
           "type": "TEXT",

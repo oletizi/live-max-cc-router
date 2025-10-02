@@ -75,6 +75,11 @@ function deployFiles(targetDir) {
       description: 'Main CC Router JavaScript'
     },
     {
+      source: path.join(__dirname, 'ioRouting.js'),
+      target: path.join(targetDir, 'ioRouting.js'),
+      description: 'MIDI Routing Helper'
+    },
+    {
       source: path.join(__dirname, '..', 'README.md'),
       target: path.join(targetDir, 'docs', 'README.md'),
       description: 'Documentation'
