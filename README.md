@@ -267,6 +267,10 @@ npm run clean      # Clean dist folder
 - Check MIDI channel (default: channel 1)
 - Test with external MIDI monitor first
 
+## Acknowledgements
+
+This project uses [ioRouting.js](https://github.com/h1data/M4L-ioRouting-js) by [h1data](https://github.com/h1data) to enable MIDI input routing on audio tracks. The MIDI routing approach was inspired by the MidiRouter Max for Live device.
+
 ## Contributing
 
 1. Fork the repository

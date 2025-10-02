@@ -85,24 +85,19 @@ function initializeRouter(): void {
 
 /**
  * Handle incoming MIDI CC messages from midiparse
- * Input format: [status, data1, data2] where midiparse outlet 2 sends controller messages
- * For CC messages: status=0xB0+channel, data1=ccNumber, data2=value
+ * Input format: [ccNumber, value] where midiparse outlet 2 sends controller messages
  */
 function list(): void {
   const args = arrayfromargs(arguments);
 
-  if (args.length < 3) {
-    post("Invalid MIDI format\n");
+  if (args.length < 2) {
+    post("Invalid MIDI format (expected 2 values, got " + args.length + ")\n");
     return;
   }
 
-  // midiparse outlet 2 sends: [status, ccNumber, value]
-  const status = args[0];
-  const ccNumber = args[1];
-  const value = args[2];
-
-  // Extract channel from status byte
-  const channel = status & 0x0F;
+  // midiparse outlet 2 sends: [ccNumber, value]
+  const ccNumber = args[0];
+  const value = args[1];
 
   // Send status to display
   outlet(0, "set", "RX: CC" + ccNumber + "=" + value);
@@ -113,8 +108,8 @@ function list(): void {
     return;
   }
 
-  // Route through CCRouter
-  ccRouter.handleCCMessage(ccNumber, value, channel);
+  // Route through CCRouter (channel is always 0 since midiparse strips it)
+  ccRouter.handleCCMessage(ccNumber, value, 0);
 }
 
 /*

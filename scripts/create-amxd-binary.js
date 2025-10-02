@@ -116,10 +116,8 @@ function createMaxForLiveDevice() {
             "saved_attribute_attributes": {
               "valueof": {
                 "parameter_enum": ["All Ins"],
-                "parameter_initial": [0],
-                "parameter_initial_enable": 0,
-                "parameter_invisible": 0,
-                "parameter_linknames": 1,
+                "parameter_invisible": 1,
+                "parameter_linknames": 0,
                 "parameter_longname": "MIDI Input",
                 "parameter_modmode": 0,
                 "parameter_shortname": "MIDI Input",
@@ -163,6 +161,30 @@ function createMaxForLiveDevice() {
             "outlettype": [""],
             "patching_rect": [400.0, 35.0, 29.0, 22.0],
             "text": "init"
+          }
+        },
+        // Delay for initial menu selection (wait for ioRouting to init)
+        {
+          "box": {
+            "id": "obj-init-delay",
+            "maxclass": "newobj",
+            "numinlets": 2,
+            "numoutlets": 1,
+            "outlettype": ["bang"],
+            "patching_rect": [440.0, 35.0, 50.0, 22.0],
+            "text": "del 100"
+          }
+        },
+        // Message to select first menu item (0 = "All Ins")
+        {
+          "box": {
+            "id": "obj-default-selection",
+            "maxclass": "message",
+            "numinlets": 2,
+            "numoutlets": 1,
+            "outlettype": [""],
+            "patching_rect": [440.0, 60.0, 20.0, 22.0],
+            "text": "0"
           }
         },
         // Title in presentation
@@ -416,6 +438,27 @@ function createMaxForLiveDevice() {
           "patchline": {
             "destination": ["obj-init-msg", 0],
             "source": ["obj-thisdevice2", 0]
+          }
+        },
+        // thisdevice2 bang to delay (for default menu selection)
+        {
+          "patchline": {
+            "destination": ["obj-init-delay", 0],
+            "source": ["obj-thisdevice2", 0]
+          }
+        },
+        // delay to default selection message
+        {
+          "patchline": {
+            "destination": ["obj-default-selection", 0],
+            "source": ["obj-init-delay", 0]
+          }
+        },
+        // default selection to menu
+        {
+          "patchline": {
+            "destination": ["obj-midi-type", 0],
+            "source": ["obj-default-selection", 0]
           }
         },
         // init message to ioRouting
