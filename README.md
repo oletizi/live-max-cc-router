@@ -1,3 +1,31 @@
+# ⚠️ ARCHIVED - This Repository Has Moved
+
+**This repository has been archived and is no longer maintained.**
+
+## New Location
+
+This project has been migrated to the `ol_dsp` monorepo:
+
+**New path:** [`ol_dsp/modules/audio-control/modules/live-max-cc-router`](https://github.com/oletizi/ol_dsp/tree/main/modules/audio-control/modules/live-max-cc-router)
+
+All future development will happen in the monorepo. Please:
+- Submit issues and PRs to the monorepo
+- Use the monorepo version for any new work
+- Update your dependencies to use `@oletizi/live-max-cc-router` from the monorepo
+
+## Migration Date
+
+Migrated: October 2, 2025
+
+## About This Project
+
+TypeScript-based MIDI CC router for Max for Live with controller-specific canonical mappings. The project enables dynamic routing of MIDI CC messages to plugin parameters with support for the Novation Launch Control XL 3 and canonical MIDI mapping definitions.
+
+---
+
+<details>
+<summary>📚 View Original README (for reference)</summary>
+
 # CC Router - TypeScript for Max for Live
 
 A TypeScript-based CC router for Launch Control XL3 that compiles to JavaScript for Max for Live. This gives you the
@@ -188,7 +216,7 @@ setmapping
 1
 "Device 1 Param 2"
 
-// Device 1 (second in chain)  
+// Device 1 (second in chain)
 setmapping
 21
 1
@@ -231,7 +259,7 @@ interface ParameterMapping {
 
 ```bash
 npm run build      # Compile TypeScript to JavaScript
-npm run watch      # Auto-compile on file changes  
+npm run watch      # Auto-compile on file changes
 npm run dev        # Watch mode with notifications
 npm run deploy     # Deploy compiled JS to Max for Live
 npm run setup      # Initial project setup
@@ -282,3 +310,5 @@ This project uses [ioRouting.js](https://github.com/h1data/M4L-ioRouting-js) by 
 ## License
 
 MIT License - see LICENSE file for details
+
+</details>
