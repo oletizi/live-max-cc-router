@@ -64,7 +64,7 @@ function createMaxForLiveDevice() {
       "enablehscroll": 1,
       "enablevscroll": 1,
       "devicewidth": 0.0,
-      "description": "CC Router for Launch Control XL3",
+      "description": "Midi to Plugin Router",
       "digest": "",
       "tags": "midi controller",
       "style": "",
@@ -199,7 +199,7 @@ function createMaxForLiveDevice() {
             "patching_rect": [15.0, 10.0, 300.0, 22.0],
             "presentation": 1,
             "presentation_rect": [10.0, 10.0, 300.0, 22.0],
-            "text": "CC Router for Launch Control XL3"
+            "text": "Midi to Plugin Router"
           }
         },
         // Status LED
