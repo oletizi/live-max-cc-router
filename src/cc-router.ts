@@ -290,7 +290,9 @@ export class CCRouter {
       // Get device name
       const devicePath = "live_set view selected_track devices " + targetDeviceIndex;
       const device = new LiveAPI(devicePath);
-      const deviceName = device.get("name");
+      const deviceNameRaw = device.get("name");
+      // LiveAPI returns arrays, extract first element as string
+      const deviceName = Array.isArray(deviceNameRaw) ? String(deviceNameRaw[0]) : String(deviceNameRaw);
 
       post("CC Router: Detected plugin: " + deviceName + "\n");
       post("CC Router: Using controller: " + this.selectedController + "\n");

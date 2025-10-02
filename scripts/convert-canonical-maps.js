@@ -61,7 +61,7 @@ function convertCanonicalMap(yamlPath) {
     }
 
     mappings[ccNumber] = {
-      deviceIndex: 0, // Always map to first device in chain
+      deviceIndex: 1, // Device 1 = first plugin after cc-router (device 0)
       parameterIndex: paramIndex,
       parameterName: control.name || `CC ${ccNumber}`,
       curve: 'linear' // Default curve, could be enhanced later
