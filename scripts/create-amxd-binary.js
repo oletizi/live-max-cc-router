@@ -245,6 +245,46 @@ function createMaxForLiveDevice() {
             "text": "Build: --:--:--"
           }
         },
+        // Auto Map button
+        {
+          "box": {
+            "id": "obj-automap-btn",
+            "maxclass": "button",
+            "numinlets": 1,
+            "numoutlets": 1,
+            "outlettype": ["bang"],
+            "patching_rect": [600.0, 10.0, 24.0, 24.0],
+            "presentation": 1,
+            "presentation_rect": [10.0, 100.0, 50.0, 20.0],
+            "parameter_enable": 0
+          }
+        },
+        // Auto Map message
+        {
+          "box": {
+            "id": "obj-automap-msg",
+            "maxclass": "message",
+            "numinlets": 2,
+            "numoutlets": 1,
+            "outlettype": [""],
+            "patching_rect": [600.0, 40.0, 60.0, 22.0],
+            "text": "automap"
+          }
+        },
+        // Auto Map label
+        {
+          "box": {
+            "id": "obj-automap-label",
+            "maxclass": "comment",
+            "numinlets": 1,
+            "numoutlets": 0,
+            "patching_rect": [630.0, 10.0, 80.0, 20.0],
+            "presentation": 1,
+            "presentation_rect": [65.0, 102.0, 60.0, 18.0],
+            "text": "Auto Map",
+            "fontsize": 10.0
+          }
+        },
         // Debug display
         {
           "box": {
@@ -585,6 +625,20 @@ function createMaxForLiveDevice() {
           "patchline": {
             "destination": ["obj-build-time", 0],
             "source": ["obj-js", 1]
+          }
+        },
+        // Auto Map button to message
+        {
+          "patchline": {
+            "destination": ["obj-automap-msg", 0],
+            "source": ["obj-automap-btn", 0]
+          }
+        },
+        // Auto Map message to JS inlet 0
+        {
+          "patchline": {
+            "destination": ["obj-js", 0],
+            "source": ["obj-automap-msg", 0]
           }
         },
         // Audio pass-through

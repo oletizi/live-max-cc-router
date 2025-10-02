@@ -81,6 +81,10 @@ function initializeRouter(): void {
     post("No devices found on track\n");
   }
   post("========================\n\n");
+
+  // Auto-detect and apply canonical mapping on load
+  post("CC Router: Auto-detecting plugin mapping...\n");
+  ccRouter.autoApplyCanonicalMapping(1);
 }
 
 /**
