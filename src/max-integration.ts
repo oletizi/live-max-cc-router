@@ -173,6 +173,34 @@ function automap(deviceIndex?: number): void {
   ccRouter.autoApplyCanonicalMapping(deviceIndex);
 }
 
+/**
+ * Set the MIDI controller to use for canonical mappings
+ * Usage: setcontroller <controllerModel>
+ */
+function setcontroller(controllerModel: string): void {
+  if (!ccRouter) {
+    post("CC Router: Not initialized\n");
+    return;
+  }
+  ccRouter.setController(controllerModel);
+}
+
+/**
+ * List all available controllers
+ */
+function listcontrollers(): void {
+  if (!ccRouter) {
+    post("CC Router: Not initialized\n");
+    return;
+  }
+  const controllers = ccRouter.getControllers();
+  post("=== Available Controllers ===\n");
+  for (let i = 0; i < controllers.length; i++) {
+    post(controllers[i].manufacturer + " " + controllers[i].model + "\n");
+  }
+  post("===========================\n");
+}
+
 function setupfor(pluginType: string): void {
   // ...
 }

@@ -69,6 +69,10 @@ function convertCanonicalMap(yamlPath) {
   }
 
   return {
+    controller: {
+      manufacturer: canonical.device?.manufacturer,
+      model: canonical.device?.model
+    },
     pluginName: canonical.plugin.name,
     pluginManufacturer: canonical.plugin.manufacturer,
     mappings: mappings,
@@ -122,16 +126,33 @@ function main() {
       const converted = convertCanonicalMap(yamlPath);
 
       if (converted && converted.pluginName) {
-        // Use plugin name as key (could enhance with manufacturer later)
-        const key = converted.pluginName.toLowerCase().replace(/[^a-z0-9]+/g, '-');
+        // Use controller model + plugin name as key for controller-specific mappings
+        const controllerKey = converted.controller?.model
+          ? converted.controller.model.toLowerCase().replace(/[^a-z0-9]+/g, '-')
+          : 'unknown-controller';
+        const pluginKey = converted.pluginName.toLowerCase().replace(/[^a-z0-9]+/g, '-');
+        const key = `${controllerKey}_${pluginKey}`;
+
         pluginMaps[key] = converted;
         convertedCount++;
-        console.log(`✅ ${relativePath} -> ${converted.pluginName}`);
+        console.log(`✅ ${relativePath} -> ${controllerKey} + ${converted.pluginName}`);
       }
     } catch (error) {
       console.warn(`⚠️  ${relativePath}: ${error.message}`);
     }
   }
+
+  // Extract unique controllers for UI selection
+  const controllers = {};
+  Object.values(pluginMaps).forEach(map => {
+    if (map.controller?.manufacturer && map.controller?.model) {
+      const key = map.controller.model.toLowerCase().replace(/[^a-z0-9]+/g, '-');
+      controllers[key] = {
+        manufacturer: map.controller.manufacturer,
+        model: map.controller.model
+      };
+    }
+  });
 
   // Generate TypeScript file
   const tsContent = `/**
@@ -140,6 +161,10 @@ function main() {
  */
 
 export interface PluginMapping {
+  controller: {
+    manufacturer?: string;
+    model?: string;
+  };
   pluginName: string;
   pluginManufacturer: string;
   mappings: {
@@ -157,14 +182,30 @@ export interface PluginMapping {
   };
 }
 
+export interface Controller {
+  manufacturer: string;
+  model: string;
+}
+
 export const CANONICAL_PLUGIN_MAPS: { [key: string]: PluginMapping } = ${JSON.stringify(pluginMaps, null, 2)};
 
+export const AVAILABLE_CONTROLLERS: { [key: string]: Controller } = ${JSON.stringify(controllers, null, 2)};
+
 /**
- * Get plugin mapping by plugin name (case-insensitive, fuzzy match)
+ * Get plugin mapping by controller and plugin name (case-insensitive, fuzzy match)
  */
-export function getPluginMapping(pluginName: string): PluginMapping | undefined {
-  const normalized = pluginName.toLowerCase().replace(/[^a-z0-9]+/g, '-');
-  return CANONICAL_PLUGIN_MAPS[normalized];
+export function getPluginMapping(controllerModel: string, pluginName: string): PluginMapping | undefined {
+  const controllerKey = controllerModel.toLowerCase().replace(/[^a-z0-9]+/g, '-');
+  const pluginKey = pluginName.toLowerCase().replace(/[^a-z0-9]+/g, '-');
+  const key = \`\${controllerKey}_\${pluginKey}\`;
+  return CANONICAL_PLUGIN_MAPS[key];
+}
+
+/**
+ * Get all available controller models
+ */
+export function getAvailableControllers(): Controller[] {
+  return Object.values(AVAILABLE_CONTROLLERS);
 }
 `;
 

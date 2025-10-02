@@ -4,6 +4,10 @@
  */
 
 export interface PluginMapping {
+  controller: {
+    manufacturer?: string;
+    model?: string;
+  };
   pluginName: string;
   pluginManufacturer: string;
   mappings: {
@@ -21,8 +25,17 @@ export interface PluginMapping {
   };
 }
 
+export interface Controller {
+  manufacturer: string;
+  model: string;
+}
+
 export const CANONICAL_PLUGIN_MAPS: { [key: string]: PluginMapping } = {
-  "channev": {
+  "launch-control-xl-3_channev": {
+    "controller": {
+      "manufacturer": "Novation",
+      "model": "Launch Control XL 3"
+    },
     "pluginName": "CHANNEV",
     "pluginManufacturer": "Analog Obsession",
     "mappings": {
@@ -195,7 +208,11 @@ export const CANONICAL_PLUGIN_MAPS: { [key: string]: PluginMapping } = {
       "version": "1.0.0"
     }
   },
-  "mini-v4": {
+  "launch-control-xl-3_mini-v4": {
+    "controller": {
+      "manufacturer": "Novation",
+      "model": "Launch Control XL 3"
+    },
     "pluginName": "Mini V4",
     "pluginManufacturer": "Arturia",
     "mappings": {},
@@ -205,7 +222,11 @@ export const CANONICAL_PLUGIN_MAPS: { [key: string]: PluginMapping } = {
       "version": "1.0.0"
     }
   },
-  "jup-8-v4": {
+  "launch-control-xl-3_jup-8-v4": {
+    "controller": {
+      "manufacturer": "Novation",
+      "model": "Launch Control XL 3"
+    },
     "pluginName": "Jup-8 V4",
     "pluginManufacturer": "Arturia",
     "mappings": {},
@@ -215,7 +236,11 @@ export const CANONICAL_PLUGIN_MAPS: { [key: string]: PluginMapping } = {
       "version": "1.0.0"
     }
   },
-  "tal-j-8": {
+  "launch-control-xl-3_tal-j-8": {
+    "controller": {
+      "manufacturer": "Novation",
+      "model": "Launch Control XL 3"
+    },
     "pluginName": "TAL-J-8",
     "pluginManufacturer": "TAL Software",
     "mappings": {
@@ -420,10 +445,26 @@ export const CANONICAL_PLUGIN_MAPS: { [key: string]: PluginMapping } = {
   }
 };
 
+export const AVAILABLE_CONTROLLERS: { [key: string]: Controller } = {
+  "launch-control-xl-3": {
+    "manufacturer": "Novation",
+    "model": "Launch Control XL 3"
+  }
+};
+
 /**
- * Get plugin mapping by plugin name (case-insensitive, fuzzy match)
+ * Get plugin mapping by controller and plugin name (case-insensitive, fuzzy match)
  */
-export function getPluginMapping(pluginName: string): PluginMapping | undefined {
-  const normalized = pluginName.toLowerCase().replace(/[^a-z0-9]+/g, '-');
-  return CANONICAL_PLUGIN_MAPS[normalized];
+export function getPluginMapping(controllerModel: string, pluginName: string): PluginMapping | undefined {
+  const controllerKey = controllerModel.toLowerCase().replace(/[^a-z0-9]+/g, '-');
+  const pluginKey = pluginName.toLowerCase().replace(/[^a-z0-9]+/g, '-');
+  const key = `${controllerKey}_${pluginKey}`;
+  return CANONICAL_PLUGIN_MAPS[key];
+}
+
+/**
+ * Get all available controller models
+ */
+export function getAvailableControllers(): Controller[] {
+  return Object.values(AVAILABLE_CONTROLLERS);
 }

@@ -4,13 +4,14 @@
  */
 
 import { ParameterMapping, LiveAPIObject, TrackInfo, DeviceInfo } from '@/types';
-import { CANONICAL_PLUGIN_MAPS, getPluginMapping } from '@/canonical-plugin-maps';
+import { CANONICAL_PLUGIN_MAPS, getPluginMapping, getAvailableControllers, Controller } from '@/canonical-plugin-maps';
 
 export class CCRouter {
   private mappings: ParameterMapping[] = [];
   private selectedTrackId: number = -1;
   private liveAPI: LiveAPIObject | null = null;
   private debugMode: boolean = true;
+  private selectedController: string = 'Launch Control XL 3'; // Default controller
 
   constructor() {
     this.initializeDefaultMappings();
@@ -292,12 +293,13 @@ export class CCRouter {
       const deviceName = device.get("name");
 
       post("CC Router: Detected plugin: " + deviceName + "\n");
+      post("CC Router: Using controller: " + this.selectedController + "\n");
 
-      // Try to find canonical mapping
-      const canonicalMapping = getPluginMapping(deviceName);
+      // Try to find canonical mapping for this controller + plugin combination
+      const canonicalMapping = getPluginMapping(this.selectedController, deviceName);
 
       if (canonicalMapping) {
-        post("CC Router: Found canonical mapping for " + canonicalMapping.pluginName + "\n");
+        post("CC Router: Found canonical mapping for " + canonicalMapping.controller.model + " + " + canonicalMapping.pluginName + "\n");
 
         // Clear existing mappings
         this.mappings = [];
@@ -319,12 +321,27 @@ export class CCRouter {
 
         post("CC Router: Applied " + mappingKeys.length + " canonical mappings for " + canonicalMapping.pluginName + "\n");
       } else {
-        post("CC Router: No canonical mapping found for " + deviceName + "\n");
+        post("CC Router: No canonical mapping found for " + this.selectedController + " + " + deviceName + "\n");
         post("CC Router: Available mappings: " + Object.keys(CANONICAL_PLUGIN_MAPS).join(", ") + "\n");
       }
     } catch (error) {
       post("CC Router: Error auto-applying canonical mapping - " + error + "\n");
     }
+  }
+
+  /**
+   * Set the selected MIDI controller
+   */
+  public setController(controllerModel: string): void {
+    this.selectedController = controllerModel;
+    post("CC Router: Controller set to " + controllerModel + "\n");
+  }
+
+  /**
+   * Get list of available controllers
+   */
+  public getControllers(): Controller[] {
+    return getAvailableControllers();
   }
 
   /**

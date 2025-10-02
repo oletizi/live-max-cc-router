@@ -285,6 +285,47 @@ function createMaxForLiveDevice() {
             "fontsize": 10.0
           }
         },
+        // Controller selection label
+        {
+          "box": {
+            "id": "obj-controller-label",
+            "maxclass": "comment",
+            "numinlets": 1,
+            "numoutlets": 0,
+            "patching_rect": [700.0, 10.0, 80.0, 20.0],
+            "presentation": 1,
+            "presentation_rect": [140.0, 102.0, 65.0, 18.0],
+            "text": "Controller:",
+            "fontsize": 10.0
+          }
+        },
+        // Controller selection menu
+        {
+          "box": {
+            "id": "obj-controller-menu",
+            "maxclass": "umenu",
+            "numinlets": 1,
+            "numoutlets": 3,
+            "outlettype": ["int", "", ""],
+            "patching_rect": [700.0, 40.0, 200.0, 22.0],
+            "presentation": 1,
+            "presentation_rect": [205.0, 100.0, 135.0, 22.0],
+            "parameter_enable": 0,
+            "items": ["Launch Control XL 3"]
+          }
+        },
+        // Controller selection message formatter
+        {
+          "box": {
+            "id": "obj-controller-format",
+            "maxclass": "newobj",
+            "numinlets": 1,
+            "numoutlets": 1,
+            "outlettype": [""],
+            "patching_rect": [700.0, 70.0, 150.0, 22.0],
+            "text": "prepend setcontroller"
+          }
+        },
         // Debug display
         {
           "box": {
@@ -639,6 +680,20 @@ function createMaxForLiveDevice() {
           "patchline": {
             "destination": ["obj-js", 0],
             "source": ["obj-automap-msg", 0]
+          }
+        },
+        // Controller menu to formatter
+        {
+          "patchline": {
+            "destination": ["obj-controller-format", 0],
+            "source": ["obj-controller-menu", 1]
+          }
+        },
+        // Controller formatter to JS inlet 0
+        {
+          "patchline": {
+            "destination": ["obj-js", 0],
+            "source": ["obj-controller-format", 0]
           }
         },
         // Audio pass-through
