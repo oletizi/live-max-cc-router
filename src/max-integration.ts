@@ -112,18 +112,6 @@ function list(): void {
   ccRouter.handleCCMessage(ccNumber, value, 0);
 }
 
-/*
-// All other functions commented out for minimal testing
-
-function msg_int(value: number): void {
-  ccRouter.handleCCMessage(13, value, 0);
-}
-
-function msg_float(value: number): void {
-  const midiValue = Math.round(value * 127);
-  ccRouter.handleCCMessage(13, midiValue, 0);
-}
-
 function setmapping(): void {
   const args = arrayfromargs(arguments);
   if (args.length < 3) {
@@ -169,8 +157,32 @@ function trackinfo(): void {
   }
 }
 
+/**
+ * Auto-apply canonical mapping for detected plugin
+ * Usage: automap [deviceIndex]
+ */
+function automap(deviceIndex?: number): void {
+  if (!ccRouter) {
+    post("CC Router: Not initialized\n");
+    return;
+  }
+  ccRouter.autoApplyCanonicalMapping(deviceIndex);
+}
+
 function setupfor(pluginType: string): void {
   // ...
+}
+
+/*
+// Unused functions commented out for reference
+
+function msg_int(value: number): void {
+  ccRouter.handleCCMessage(13, value, 0);
+}
+
+function msg_float(value: number): void {
+  const midiValue = Math.round(value * 127);
+  ccRouter.handleCCMessage(13, midiValue, 0);
 }
 
 function setupEQ8Mappings(): void {

@@ -4,6 +4,7 @@
  */
 
 import { ParameterMapping, LiveAPIObject, TrackInfo, DeviceInfo } from '@/types';
+import { CANONICAL_PLUGIN_MAPS, getPluginMapping } from '@/canonical-plugin-maps';
 
 export class CCRouter {
   private mappings: ParameterMapping[] = [];
@@ -259,9 +260,70 @@ export class CCRouter {
    */
   public removeMapping(ccNumber: number): void {
     this.mappings = this.mappings.filter(m => m.ccNumber !== ccNumber);
-    
+
     if (this.debugMode) {
       post("CC Router: Removed mapping for CC " + ccNumber + "\n");
+    }
+  }
+
+  /**
+   * Auto-detect plugin on selected track and apply canonical mapping if available
+   */
+  public autoApplyCanonicalMapping(deviceIndex?: number): void {
+    try {
+      const selectedTrack = new LiveAPI("live_set view selected_track");
+
+      if (!selectedTrack || selectedTrack.id === "0") {
+        post("CC Router: No track selected\n");
+        return;
+      }
+
+      const devices = selectedTrack.get("devices");
+      const targetDeviceIndex = deviceIndex !== undefined ? deviceIndex : 1; // Default to first plugin after cc-router
+
+      if (targetDeviceIndex >= devices.length) {
+        post("CC Router: Device index " + targetDeviceIndex + " not found (only " + devices.length + " devices)\n");
+        return;
+      }
+
+      // Get device name
+      const devicePath = "live_set view selected_track devices " + targetDeviceIndex;
+      const device = new LiveAPI(devicePath);
+      const deviceName = device.get("name");
+
+      post("CC Router: Detected plugin: " + deviceName + "\n");
+
+      // Try to find canonical mapping
+      const canonicalMapping = getPluginMapping(deviceName);
+
+      if (canonicalMapping) {
+        post("CC Router: Found canonical mapping for " + canonicalMapping.pluginName + "\n");
+
+        // Clear existing mappings
+        this.mappings = [];
+
+        // Apply canonical mappings
+        const mappingKeys = Object.keys(canonicalMapping.mappings);
+        for (let i = 0; i < mappingKeys.length; i++) {
+          const ccNumber = parseInt(mappingKeys[i], 10);
+          const mapping = canonicalMapping.mappings[ccNumber];
+
+          this.setMapping(
+            ccNumber,
+            mapping.deviceIndex,
+            mapping.parameterIndex,
+            mapping.parameterName,
+            mapping.curve
+          );
+        }
+
+        post("CC Router: Applied " + mappingKeys.length + " canonical mappings for " + canonicalMapping.pluginName + "\n");
+      } else {
+        post("CC Router: No canonical mapping found for " + deviceName + "\n");
+        post("CC Router: Available mappings: " + Object.keys(CANONICAL_PLUGIN_MAPS).join(", ") + "\n");
+      }
+    } catch (error) {
+      post("CC Router: Error auto-applying canonical mapping - " + error + "\n");
     }
   }
 

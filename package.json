@@ -8,11 +8,14 @@
     "watch": "rollup -c -w",
     "dev": "node scripts/watch-deploy.js",
     "clean": "rimraf dist",
+    "convert-maps": "node scripts/convert-canonical-maps.js",
+    "prebuild": "npm run convert-maps",
     "deploy": "npm run build && node scripts/deploy.js",
     "deploy:initial": "node scripts/deploy.js",
     "setup": "node scripts/setup.js"
   },
   "devDependencies": {
+    "@oletizi/canonical-midi-maps": "^1.20.0",
     "@rollup/plugin-node-resolve": "^16.0.1",
     "@rollup/plugin-typescript": "^12.1.4",
     "@types/node": "^20.8.0",
@@ -22,7 +25,8 @@
     "rimraf": "^5.0.0",
     "rollup": "^2.79.2",
     "rollup-plugin-terser": "^7.0.2",
-    "typescript": "^5.2.2"
+    "typescript": "^5.2.2",
+    "yaml": "^2.8.1"
   },
   "engines": {
     "node": ">=16.0.0"
